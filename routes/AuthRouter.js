@@ -1,6 +1,7 @@
 const Express = require('express')
 const UserModel = require('../models/User')
 const isAuth = require('../middleware/isAuth')
+const axios = require("axios");
 
 const AuthRouter = Express.Router()
 
@@ -152,6 +153,26 @@ AuthRouter.get('/logout', isAuth, async(req, res)=>{
         return res.send({success: false, message: "Trouble in logging out! Please contact support Team."})
     }
 })
+
+
+AuthRouter.get("/fetch-ml-predict", async (req, res) => {
+    try {
+        const response = await axios.get("http://localhost:8000/predict");
+
+        return res.status(200).json({
+            success: true,
+            data: response.data
+        });
+
+    } catch (err) {
+        console.error("Error:", err.message);
+
+        return res.status(500).json({
+            success: false,
+            error: err.message
+        });
+    }
+});
 
 
 module.exports = AuthRouter
